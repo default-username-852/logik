@@ -3,6 +3,7 @@ use crate::data::subnet::SubnetState;
 use std::collections::HashMap;
 use std::cell::Cell;
 use crate::{map, port_or_default};
+use intertrait::cast_to;
 
 #[derive(Debug)]
 pub(crate) struct Constant {
@@ -68,6 +69,7 @@ impl Component for Button {
     }
 }
 
+#[cast_to]
 impl Pokeable for Button {
     fn pokeable_areas(&self) -> i32 {
         1
@@ -91,8 +93,6 @@ impl Button {
         Self { state: Cell::new(false) }
     }
 }
-
-intertrait::castable_to!(Button => Pokeable);
 
 #[derive(Debug)]
 pub(crate) struct DFlipFlop {
@@ -138,6 +138,21 @@ impl Component for DFlipFlop {
             3 => vals.0,
             4 => vals.1
         )
+    }
+}
+
+#[cast_to]
+impl Pokeable for DFlipFlop {
+    fn pokeable_areas(&self) -> i32 {
+        1
+    }
+    
+    fn poke_start(&mut self, _: i32) {}
+    
+    fn poke_end(&mut self, area: i32) {
+        if area == 0 {
+            self.state.set(!self.state.get());
+        }
     }
 }
 
@@ -188,6 +203,21 @@ impl Component for TFlipFlop {
             3 => vals.0,
             4 => vals.1
         )
+    }
+}
+
+#[cast_to]
+impl Pokeable for TFlipFlop {
+    fn pokeable_areas(&self) -> i32 {
+        1
+    }
+    
+    fn poke_start(&mut self, _: i32) {}
+    
+    fn poke_end(&mut self, area: i32) {
+        if area == 0 {
+            self.state.set(!self.state.get());
+        }
     }
 }
 
@@ -248,6 +278,21 @@ impl Component for JKFlipFlop {
     }
 }
 
+#[cast_to]
+impl Pokeable for JKFlipFlop {
+    fn pokeable_areas(&self) -> i32 {
+        1
+    }
+    
+    fn poke_start(&mut self, _: i32) {}
+    
+    fn poke_end(&mut self, area: i32) {
+        if area == 0 {
+            self.state.set(!self.state.get());
+        }
+    }
+}
+
 impl JKFlipFlop {
     pub(crate) fn new() -> Self {
         Self { state: Cell::new(false) }
@@ -303,6 +348,21 @@ impl Component for SRFlipFlop {
     }
 }
 
+#[cast_to]
+impl Pokeable for SRFlipFlop {
+    fn pokeable_areas(&self) -> i32 {
+        1
+    }
+    
+    fn poke_start(&mut self, _: i32) {}
+    
+    fn poke_end(&mut self, area: i32) {
+        if area == 0 {
+            self.state.set(!self.state.get());
+        }
+    }
+}
+
 impl SRFlipFlop {
     pub(crate) fn new() -> Self {
         Self { state: Cell::new(false) }
@@ -335,6 +395,21 @@ impl Component for Clock {
         self.state.set(!self.state.get());
         
         map!(0 => val)
+    }
+}
+
+#[cast_to]
+impl Pokeable for Clock {
+    fn pokeable_areas(&self) -> i32 {
+        1
+    }
+    
+    fn poke_start(&mut self, _: i32) {}
+    
+    fn poke_end(&mut self, area: i32) {
+        if area == 0 {
+            self.state.set(!self.state.get());
+        }
     }
 }
 
