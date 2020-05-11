@@ -112,3 +112,17 @@ pub extern "C" fn port_state(data: *mut Data, component: i32, port: i32) -> Subn
     
     data.port_state(component, port as usize).unwrap()
 }
+
+#[no_mangle]
+pub extern "C" fn poke_start(data: *mut Data, component: i32, area: i32) {
+    let data = unsafe { &mut *data };
+    
+    data.poke_start(component, area);
+}
+
+#[no_mangle]
+pub extern "C" fn poke_end(data: *mut Data, component: i32, area: i32) {
+    let data = unsafe { &mut *data };
+    
+    data.poke_end(component, area);
+}

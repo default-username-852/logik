@@ -1,4 +1,4 @@
-use crate::data::component::{Component, PortType, StateChange};
+use crate::data::component::{Component, PortType, StateChange, Pokeable};
 use crate::data::subnet::SubnetState;
 use std::collections::HashMap;
 use std::cell::Cell;
@@ -68,11 +68,31 @@ impl Component for Button {
     }
 }
 
+impl Pokeable for Button {
+    fn pokeable_areas(&self) -> i32 {
+        1
+    }
+    
+    fn poke_start(&mut self, area: i32) {
+        if area == 0 {
+            self.state.set(true);
+        }
+    }
+    
+    fn poke_end(&mut self, area: i32) {
+        if area == 0 {
+            self.state.set(false);
+        }
+    }
+}
+
 impl Button {
     pub(crate) fn new() -> Self {
         Self { state: Cell::new(false) }
     }
 }
+
+intertrait::castable_to!(Button => Pokeable);
 
 #[derive(Debug)]
 pub(crate) struct DFlipFlop {
@@ -306,7 +326,7 @@ impl Component for Clock {
         }
     }
     
-    fn evaluate(&self, data: HashMap<usize, StateChange>) -> HashMap<usize, SubnetState> {
+    fn evaluate(&self, _: HashMap<usize, StateChange>) -> HashMap<usize, SubnetState> {
         let val = match self.state.get() {
             true => SubnetState::On,
             false => SubnetState::Off

@@ -1,9 +1,10 @@
 use std::collections::{HashMap, HashSet, BinaryHeap, VecDeque};
 use std::collections::hash_map::Entry;
 
-use crate::data::component::{Component, PortType, StateChange};
+use crate::data::component::{Component, PortType, StateChange, Pokeable};
 use crate::data::subnet::{Subnet, SubnetState};
 use std::cmp::Reverse;
+use intertrait::cast::CastMut;
 
 pub(crate) mod subnet;
 pub(crate) mod component;
@@ -201,6 +202,26 @@ impl Data {
     
     pub(crate) fn time_step(&mut self) {
         self.simulation.time_step(&self.clocks, &self.components, &mut self.subnets, &self.edges);
+    }
+    
+    pub(crate) fn poke_start(&mut self, component: i32, area: i32) {
+        let c = &mut **self.components.get_mut(&component).unwrap();
+        
+        if let Some(pokeable) = c.cast::<dyn Pokeable>() {
+            pokeable.poke_start(area);
+            self.simulation.update_component(component, &self.components, &mut self.subnets, &self.edges);
+            self.simulation.process_until_clean(&self.components, &mut self.subnets, &self.edges);
+        }
+    }
+    
+    pub(crate) fn poke_end(&mut self, component: i32, area: i32) {
+        let c = &mut **self.components.get_mut(&component).unwrap();
+        
+        if let Some(pokeable) = c.cast::<dyn Pokeable>() {
+            pokeable.poke_end(area);
+            self.simulation.update_component(component, &self.components, &mut self.subnets, &self.edges);
+            self.simulation.process_until_clean(&self.components, &mut self.subnets, &self.edges);
+        }
     }
 }
 

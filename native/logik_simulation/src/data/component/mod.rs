@@ -2,12 +2,13 @@ use std::fmt::Debug;
 use crate::data::subnet::SubnetState;
 use std::collections::HashMap;
 use crate::data::EdgeDirection;
+use intertrait::CastFrom;
 
 pub(crate) mod statefuls;
 pub(crate) mod components;
 
 /// A trait to define common behaviour between the components
-pub(crate) trait Component: Debug {
+pub(crate) trait Component: Debug + CastFrom {
     fn ports(&self) -> usize;
     fn port_type(&self, port: usize) -> Option<PortType>;
     // requires that data has a value for every input or bidirectional port
@@ -19,6 +20,12 @@ pub(crate) trait Component: Debug {
             .map(|e| self.port_type(e).unwrap())
             .collect()
     }
+}
+
+pub(crate) trait Pokeable {
+    fn pokeable_areas(&self) -> i32;
+    fn poke_start(&mut self, area: i32);
+    fn poke_end(&mut self, area: i32);
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -70,6 +77,7 @@ impl StateChange {
     }
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[repr(i32)]
 pub enum ComponentId {

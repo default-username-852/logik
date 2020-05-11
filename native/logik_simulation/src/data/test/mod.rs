@@ -1,7 +1,7 @@
 use crate::data::component::components::*;
 use crate::{map, set};
 use super::*;
-use crate::data::component::statefuls::SRFlipFlop;
+use crate::data::component::statefuls::{SRFlipFlop, Button};
 use std::cell::Cell;
 
 macro_rules! edge {
@@ -363,4 +363,29 @@ fn test_linking() {
     assert_eq!(data.simulation.dirty_subnets, VecDeque::from(vec![]));
     
     assert_eq!(data.subnets.get(&2).unwrap().val(), SubnetState::On);
+}
+
+#[test]
+fn test_poking() {
+    let mut data = Data::new();
+    
+    data.add_subnet(0);
+    data.add_component(Box::new(Button::new()), vec![None]);
+    data.link(1, 0, 0);
+    
+    assert_eq!(data.subnets, map!(
+        0 => subnet!(SubnetState::Off)
+    ));
+    
+    data.poke_start(1, 0);
+    
+    assert_eq!(data.subnets, map!(
+        0 => subnet!(SubnetState::On)
+    ));
+    
+    data.poke_end(1, 0);
+    
+    assert_eq!(data.subnets, map!(
+        0 => subnet!(SubnetState::Off)
+    ));
 }
